@@ -1,0 +1,27 @@
+//Written by Wells Montague with the gracious assistance of ChatGPT
+
+function saveCsvAttachmentsToDrive() {
+  // Define the label which marks the emails to be processed.
+  var label = GmailApp.getUserLabelByName("SaveToDrive");
+  if (!label) {
+    label = GmailApp.createLabel("SaveToDrive");
+  }
+  var threads = label.getThreads();
+
+  for (var i = 0; i < threads.length; i++) {
+    var messages = threads[i].getMessages();
+    for (var j = 0; j < messages.length; j++) {
+      var attachments = messages[j].getAttachments();
+      for (var k = 0; k < attachments.length; k++) {
+        var attachment = attachments[k];
+        if (attachment.getName() === "axonius.csv") {
+          // This logs the name of the file for debugging purposes.
+          Logger.log("Saving File: " + attachment.getName());
+          DriveApp.createFile(attachment);
+        }
+      }
+    }
+    // Mark the thread as processed and remove the label.
+    threads[i].removeLabel(label);
+  }
+}
